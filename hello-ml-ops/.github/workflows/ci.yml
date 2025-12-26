@@ -1,45 +1,46 @@
 name: CI - Train and Save the model
 
-#action on which the workflow should be triggered
-on:   
+on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
- matrix-pip:
-   name: Train and Save the model
-   runs-on: ubuntu-latest #github actions need a runner
-   strategy: #running the runner on different versions of python
-     matrix:
-       python: [3.11,3.12]
-    
-     steps:
-      - name: Checkout #checking the source code
-        uses:actions/checkout@v4
-      
-      - name: Setup python
-        uses: actions/setup-python@v4
-        with: #which version to install??
-           python-version: ${{matrix.python}}
+  matrix-pip:
+    name: Train and Save the model
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12]
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Upgrade pip
         run: python -m pip install --upgrade pip setuptools wheel
-      
+
       - name: Install project dependencies
-        run: python -m pip install -r requirements.txt
-      
+        run: python -m pip install -r hello-ml-ops/requirements.txt
+
       - name: Train the model
-        run:
-          python train.python
-          ls -la artifacts
-      
+        run: |
+          python hello-ml-ops/train.py
+          ls -la hello-ml-ops/artifacts
+
       - name: Upload artifacts
-        uses: actions/Upload-artifact@v4
-        with: #which artifact to upload?
-          name: ml-artifacts-${{matrix.python}}-${{github.run_id}} #to make artifacts location unique
-          path: artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ml-artifacts-${{ matrix.python-version }}-${{ github.run_id }}
+          path: hello-ml-ops/artifacts
+
           
           
           
