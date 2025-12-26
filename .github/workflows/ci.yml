@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        python: [3.10, 3.11]   # avoid 3.12 for ML
+        python: ["3.10", "3.11"]   # avoid 3.12 for ML
 
     steps:
       - name: Checkout
